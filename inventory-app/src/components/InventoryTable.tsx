@@ -91,7 +91,8 @@ export default function InventoryTable({ items, onEditItem, onDeleteItem }: Inve
       const imgFolder = zip.folder('images');
       
       // Prepare data for Excel
-      const excelData = await Promise.all(items.map(async (item, index) => {
+      // Eliminar el parámetro 'index' no utilizado de la función de callback map
+      const excelData = await Promise.all(items.map(async (item) => {
         const imageLinks = [];
         
         // Process each image
@@ -117,7 +118,7 @@ export default function InventoryTable({ items, onEditItem, onDeleteItem }: Inve
           'Descripción': item.description,
           'Ubicación': item.location,
           'Usuario': item.user,
-          'Fecha/Hora': formatDate(item.date),
+          'Fecha/Hora': formatDate(item.date), // Asegúrate de que formatDate se llame aquí
           'Imágenes': imageLinks.join(', ')
         };
       }));
