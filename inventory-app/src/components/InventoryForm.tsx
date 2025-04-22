@@ -139,7 +139,11 @@ export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: I
               inputMode="numeric"
               pattern="[0-9]*"
               value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Allow empty input temporarily, treat as 0 for state
+                setQuantity(value === '' ? 0 : parseInt(value) || 0);
+              }}
               className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               required
             />

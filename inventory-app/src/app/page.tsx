@@ -29,14 +29,22 @@ export default function Home() {
       try {
         setItems(JSON.parse(savedItems));
       } catch (error) {
-        console.error('Error al cargar datos:', error);
+        console.error('Error al cargar datos desde localStorage:', error);
+        // Mostrar una notificación al usuario sobre el error de carga
+        setNotification({ message: 'Error al cargar los datos guardados. Es posible que estén corruptos.', type: 'error' });
       }
     }
   }, []);
 
   // Guardar datos en localStorage cuando cambian
   useEffect(() => {
-    localStorage.setItem('inventoryItems', JSON.stringify(items));
+    try {
+      localStorage.setItem('inventoryItems', JSON.stringify(items));
+    } catch (error) {
+      console.error('Error al guardar datos en localStorage:', error);
+      // Opcional: Mostrar una notificación al usuario sobre el error de guardado
+      setNotification({ message: 'Error al guardar los datos. El almacenamiento podría estar lleno.', type: 'error' });
+    }
   }, [items]);
 
   const handleAddItem = (newItem: InventoryItem) => {
@@ -46,13 +54,16 @@ export default function Home() {
         prevItems.map(item => item.id === newItem.id ? newItem : item)
       );
       setNotification({ message: 'Ítem actualizado correctamente', type: 'success' });
+      setShowForm(false); // Ocultar formulario después de editar
+      setItemToEdit(null); // Resetear itemToEdit después de editar
     } else {
       // Añadir nuevo ítem
       setItems(prevItems => [...prevItems, newItem]);
       setNotification({ message: 'Ítem añadido correctamente', type: 'success' });
+      // No ocultar el formulario (setShowForm(false)) para permitir añadir más ítems.
+      // El resetForm dentro de InventoryForm limpiará los campos.
+      // No es necesario resetear itemToEdit aquí porque ya es null al añadir.
     }
-    setShowForm(false);
-    setItemToEdit(null);
   };
 
   const handleEditItem = (item: InventoryItem) => {
