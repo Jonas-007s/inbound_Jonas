@@ -22,7 +22,7 @@ interface InventoryFormProps {
 
 export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: InventoryFormProps) {
   const [name, setName] = useState(itemToEdit?.name || '');
-  const [quantity, setQuantity] = useState(itemToEdit?.quantity || 0);
+  const [quantity, setQuantity] = useState(itemToEdit?.quantity !== undefined && itemToEdit?.quantity !== null && itemToEdit.quantity !== 0 ? itemToEdit.quantity.toString() : '');
   const [description, setDescription] = useState(itemToEdit?.description || '');
   const [location, setLocation] = useState(itemToEdit?.location || '');
   const [user, setUser] = useState(itemToEdit?.user || '');
@@ -30,7 +30,7 @@ export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: I
   const [previewImages, setPreviewImages] = useState<string[]>(itemToEdit?.images || []);
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null); 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: I
     const newItem: InventoryItem = {
       id: itemToEdit?.id || Date.now().toString(),
       name,
-      quantity,
+      quantity: parseInt(quantity) || 0,
       description,
       location,
       user,
@@ -58,7 +58,7 @@ export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: I
   const resetForm = () => {
     if (!itemToEdit) {
       setName('');
-      setQuantity(0);
+      setQuantity('');
       setDescription('');
       setLocation('');
       setUser('');
@@ -141,11 +141,15 @@ export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: I
               value={quantity}
               onChange={(e) => {
                 const value = e.target.value;
-                // Allow empty input temporarily, treat as 0 for state
-                setQuantity(value === '' ? 0 : parseInt(value) || 0);
+                // Permitir vacío, solo números
+                if (/^\d*$/.test(value)) {
+                  setQuantity(value);
+                }
               }}
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-blue-500 focus:ring-2 focus:ring-blue-400"
               required
+              placeholder="Cantidad"
+              aria-label="Cantidad"
             />
           </div>
         </div>
@@ -272,7 +276,8 @@ export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: I
             <button
               type="button"
               onClick={onCancelEdit}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm flex items-center justify-center"
+              className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm flex items-center justify-center text-base focus:outline-blue-500 focus:ring-2 focus:ring-blue-400"
+              aria-label="Cancelar edición"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -283,7 +288,8 @@ export default function InventoryForm({ onAddItem, itemToEdit, onCancelEdit }: I
           
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors shadow-sm flex items-center justify-center"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors shadow-sm flex items-center justify-center text-base focus:outline-blue-500 focus:ring-2 focus:ring-blue-400"
+            aria-label={itemToEdit ? 'Actualizar ítem' : 'Registrar ítem'}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

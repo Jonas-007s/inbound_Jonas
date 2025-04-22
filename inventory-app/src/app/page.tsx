@@ -155,7 +155,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>© 2024 Registro de Inventario - Jonas_007</p>
+        <p>© 2025 Registro de Inventario - Jonas_007</p>
       </footer>
     </div>
   );
